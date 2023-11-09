@@ -11,9 +11,35 @@
 
 Kamailio вернет JSON с кодами AVP, эмулятор же должен эти коды преобразовать в Human readable строки, что бы полученный результат можно было лего прочитать, так же как в wireshark. Например вместо  ```{ "avpCode": 450, "vendorId": 0, "Flags": M, "int32": 0 }```  выдавать: ```{ avp: "Subscription-Id-Type: 0 (END_USER_E164)" }```
 
+### Call flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant P as P-GW
+    participant O as OCS
+    U->>F: HTTP POST with human readable JSON data
+    activate F
+    F->>P: HTTP POST with JSON data
+    activate P
+    P->>O: Gy over Diameter - CCR Initial_Request
+    O->>P: Credit Control Answer
+    P->>F: HTTP reply with JSON data from CCA
+    F->>U: HTTP reply with human readable JSON
+```
 
 ### Просмотр результатов
 
+C помощью команды curl на Frontend отправляем примерно такой запрос:
+```
+{
+    MSISDN: 79001234568
+    IMSI: 999990100000001
+} 
+```
+
+### Отладка
 Следующей командой можно записать обмен пакетами между OCS
 ```
 docker run --rm --net=container:ocs1 -v $PWD:/tcpdump kaazing/tcpdump -n -s 0 -vvvv
