@@ -48,6 +48,7 @@ docker run --rm --net=container:ocs1 -v $PWD:/tcpdump kaazing/tcpdump -n -s 0 -v
 ### Архитектура EPC (Evolved Packet Core)
 ```mermaid
 graph LR
+    UE -- Uu --> eNodeB
     eNodeB -- S1-C --> MME
     eNodeB -- S1-U --> S-GW
     MME -- S11 --> S-GW
